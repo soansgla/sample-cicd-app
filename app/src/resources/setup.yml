@@ -1,0 +1,26 @@
+ - os: linux
+   dist: bionic
+   name: Solaris VM
+   if: (branch !~ ^r/.*$ AND head_branch !~ ^r/.*$) AND ((type = push AND branch = master) OR type = pull_request OR tag =~ /^v\d+\.\d+\.\d+$/)
+   sudo: true
+   install:
+     - wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+     - echo -e "\ndeb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bionic contrib\n" | sudo tee -a /etc/apt/sources.list
+     - sudo apt-get update > /dev/null
+     - sudo apt-get install -y linux-headers-$(uname -r) virtualbox-5.2 rsync
+     - wget -q "https://homepages.cwi.nl/~hannes/86Cv27lf5353lJR/Solaris10_1-13-2.ova"
+     - VBoxManage import Solaris10_1-13-2.ova
+     - rm Solaris10_1-13-2.ova
+     - VBoxManage modifyvm "Solaris10_1-13" --usb off --usbehci off --usbxhci off --cpus 2 --hwvirtex on --memory 6114
+     - VBoxManage startvm "Solaris10_1-13" --type headless
+     - chmod 400 id_rsa_solaris
+     - export SSHFLAGS="-o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i id_rsa_solaris"
+     - export SCMD="ssh $SSHFLAGS -p 8989 root@localhost"
+     - sleep 60
+     - while ! $SCMD ls ; do sleep 30 ; done
+     - $SCMD 'bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"'
+   script:
+     - python scripts/amalgamation.py > /dev/null
+     - rsync -a -e "ssh $SSHFLAGS -p 8989" --exclude=.git --exclude=build --exclude=third_party/sqllogictest --exclude=third_party/imdb .  root@localhost:/sampledb
+     - travis_wait 50 $SCMD 'rm -rf /sampledb/build && mkdir -p /sampledb/build && cd /sampledb/build && export PATH=/opt/csw/bin/:$PATH CXX=g++ CC=gcc  && cmake -DCMAKE_AR=/opt/csw/bin/gar -DCMAKE_BUILD_TYPE=Debug -DAMALGAMATION_BUILD=1 .. && gmake -j2'
+     - $SCMD /sampledb/build/test/unittest "~[copy]~[file_system]~[.]"

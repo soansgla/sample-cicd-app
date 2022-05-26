@@ -1,0 +1,17 @@
+
+infra/.terraform*
+infra/*.json
+infra/*.binary
+infra/plan_output
+infra/.infracost*
+infra/*.tfplan
+
+target/
+app/dependency-reduced-pom.xml
+
+.idea
+*.iml
+
+.classpath
+.project
+.settings
