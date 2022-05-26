@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "terraform-state" {
+resource "aws_s3_bucket" "s3-bucket" {
   bucket = "sample-123450-devops-aodtest"
   acl    = "private"
   versioning {
