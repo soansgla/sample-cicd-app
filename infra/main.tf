@@ -16,3 +16,16 @@ resource "aws_s3_bucket" "s3-bucket" {
     prevent_destroy = true
   }
 }
+
+resource "aws_ecs_cluster" "foo" {
+  name = "white-hart"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+}
+
+resource "aws_secretsmanager_secret" "example" {
+  name = "example"
+}
