@@ -1,51 +1,51 @@
-- name: Configure AWS Credentials
-  id: iam-role
-  uses: aws-actions/configure-aws-credentials@v1
-  with:
-    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws-region: ap-southeast-2
-
-- uses: actions/checkout@v2
-  if: steps.iam-role.outcome == 'success'
-  with:
-    fetch-depth: 0
-- name: Set up JDK 1.8
-  if: steps.iam-role.outcome == 'success'
-  uses: actions/setup-java@v1
-  with:
-    java-version: 1.8
-- name: Build project
-  if: steps.iam-role.outcome == 'success'
-  run: cd app && mvn compile -DskipTests
-
-- name: Amazon CodeGuru Reviewer Scanner
-  uses: aws-actions/codeguru-reviewer
-  if: steps.iam-role.outcome == 'success'
-  with:
-    build_path: target # build artifact(s) directory
-    s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
-
-- name: Upload review result
-  if: steps.iam-role.outcome == 'success'
-  uses: github/codeql-action/upload-sarif@v1
-  with:
-    sarif_file: codeguru-results.sarif.json
-
 - name: CodeGuru Reviewer GitHub Actions Integration
   on: [pull_request, push, schedule]
   jobs:
     CodeGuru-Reviewer-Actions:
       runs-on: ubuntu-latest
       steps:
-      - name: Amazon CodeGuru Reviewer Scanner
-        uses: aws-actions/codeguru-reviewer
-        if: steps.iam-role.outcome == 'success'
-        with:
-          build_path: target # build artifact(s) directory
-          s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
-      - name: Upload review result
-        if: steps.iam-role.outcome == 'success'
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: codeguru-results.sarif.json
+        - name: Configure AWS Credentials
+          id: iam-role
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ap-southeast-2
+
+        - uses: actions/checkout@v2
+          if: steps.iam-role.outcome == 'success'
+          with:
+            fetch-depth: 0
+        - name: Set up JDK 1.8
+          if: steps.iam-role.outcome == 'success'
+          uses: actions/setup-java@v1
+          with:
+            java-version: 1.8
+        - name: Build project
+          if: steps.iam-role.outcome == 'success'
+          run: cd app && mvn compile -DskipTests
+
+        - name: Amazon CodeGuru Reviewer Scanner
+          uses: aws-actions/codeguru-reviewer
+          if: steps.iam-role.outcome == 'success'
+          with:
+            build_path: target # build artifact(s) directory
+            s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
+
+        - name: Upload review result
+          if: steps.iam-role.outcome == 'success'
+          uses: github/codeql-action/upload-sarif@v1
+          with:
+            sarif_file: codeguru-results.sarif.json
+
+        - name: Amazon CodeGuru Reviewer Scanner
+          uses: aws-actions/codeguru-reviewer
+          if: steps.iam-role.outcome == 'success'
+          with:
+            build_path: target # build artifact(s) directory
+            s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
+        - name: Upload review result
+          if: steps.iam-role.outcome == 'success'
+          uses: github/codeql-action/upload-sarif@v1
+          with:
+            sarif_file: codeguru-results.sarif.json
