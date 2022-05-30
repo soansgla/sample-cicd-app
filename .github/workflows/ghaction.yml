@@ -30,7 +30,7 @@ jobs:
         uses: aws-actions/codeguru-reviewer@v1.1
         if: steps.iam-role.outcome == 'success'
         with:
-          build_path: target # build artifact(s) directory
+          build_path: ./app/target/classes # build artifact(s) directory
           s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
 
       - name: Upload review result
