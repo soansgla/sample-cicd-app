@@ -45,8 +45,3 @@ jobs:
       #   with:
       #     build_path: target # build artifact(s) directory
       #     s3_bucket: 'codeguru-reviewer-devopsaod-bucket'  # S3 Bucket starting with "codeguru-reviewer-*"
-      - name: Upload review result
-        if: steps.iam-role.outcome == 'success'
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: codeguru-results.sarif.json
