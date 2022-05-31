@@ -1,5 +1,5 @@
 name: CodeGuru Reviewer GitHub Actions Integration
-on: [pull_request, push, schedule]
+on: [pull_request]
 jobs:
   build:
     name: CodeGuru-Reviewer-Actions
