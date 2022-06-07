@@ -64,10 +64,11 @@ public class EventHandler implements RequestHandler<ScheduledEvent, String> {
     }
 
     public String weakMessageEncryption(String message, String key) throws Exception {
-        Cipher cipher = Cipher.getInstance("RSA");
-        SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        return new String(cipher.doFinal(message.getBytes()), StandardCharsets.UTF_8);
+        // Cipher cipher = Cipher.getInstance("RSA");
+        // SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
+        // cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        // return new String(cipher.doFinal(message.getBytes()), StandardCharsets.UTF_8);
+        return ""
     }
 
     public ShopifyShop connectToShopify(String subdomain) {
