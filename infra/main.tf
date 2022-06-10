@@ -29,3 +29,16 @@ resource "aws_ecs_cluster" "foo" {
 resource "aws_secretsmanager_secret" "example" {
   name = "example"
 }
+
+resource "aws_db_instance" "default" {
+  count                = 8
+  allocated_storage    = 10
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.r6gd.16xlarge"
+  name                 = "mydb"
+  username             = "foo"
+  password             = "test"
+  parameter_group_name = "default.mysql5.7"
+  skip_final_snapshot  = true
+}
